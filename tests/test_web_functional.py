@@ -470,6 +470,45 @@ class TestWebFunctional(WebFunctionalSetupMixin, unittest.TestCase):
 
         self.loop.run_until_complete(go())
 
+    def test_100_continue_raise_http_exception(self):
+
+        @asyncio.coroutine
+        def handler(request):
+            return web.Response()
+
+        @asyncio.coroutine
+        def expect_handler(request):
+            raise web.HTTPForbidden()
+
+        middleware_called = False
+
+        @asyncio.coroutine
+        def middleware(app, handler):
+            @asyncio.coroutine
+            def middleware_handler(request):
+                nonlocal middleware_called
+                middleware_called = True
+                return (yield from handler(request))
+            return middleware_handler
+
+        @asyncio.coroutine
+        def go():
+            app, _, url = yield from self.create_server('POST', '/')
+            app.middlewares.append(middleware)
+            app.router.add_route(
+                'GET', '/', handler, expect_handler=expect_handler)
+
+            resp = yield from request(
+                'get', url,
+                expect100=True,  # wait until server returns 100 continue
+                loop=self.loop)
+            self.assertEqual(403, resp.status)
+            resp.close(force=True)
+
+        self.assertTrue(middleware_called)
+
+        self.loop.run_until_complete(go())
+
     def test_100_continue_for_not_found(self):
 
         @asyncio.coroutine

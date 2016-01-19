@@ -80,8 +80,12 @@ class RequestHandler(ServerHttpProtocol):
             request._match_info = match_info
             expect = request.headers.get(hdrs.EXPECT)
             if expect and expect.lower() == "100-continue":
-                resp = (
-                    yield from match_info.route.handle_expect_header(request))
+                try:
+                    resp = (
+                        yield from match_info.route.handle_expect_header(
+                            request))
+                except HTTPException as exc:
+                    resp = exc
 
             if resp is None:
                 handler = match_info.handler
