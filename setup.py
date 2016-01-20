@@ -102,6 +102,12 @@ args = dict(
     tests_require=tests_require,
     include_package_data=True,
     ext_modules=extensions,
+    # the following makes a plugin available to pytest
+    entry_points = {
+        'pytest11': [
+            'pytest_aiohttp = aiohttp.pytest_aiohttp',
+        ]
+    },
     cmdclass=dict(build_ext=ve_build_ext,
                   test=PyTest))
 
