@@ -143,8 +143,8 @@ period ask to raise he status.
   helper for mock/fake web requests in python aiohttp package.
 
 - `aiohttp-transmute
-  <https://github.com/toumorokoshi/aiohttp-transmute>`_ A transmute
-  implementation for aiohttp.
+  <https://github.com/toumorokoshi/aiohttp-transmute>`_ All-in-one library to painlessly provide REST apis
+  with schema validation and swagger documentation (UI also included).
 
 - `aiohttp_apiset <https://github.com/aamalev/aiohttp_apiset>`_
   Package to build routes using swagger specification.
